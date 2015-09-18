@@ -1,0 +1,32 @@
+td > input[type="button"]{
+	width: 30px;
+	height: 30px;
+	transition: 0.1s;
+}
+
+.tile {
+	float: left;
+	margin: 0 3px 3px 0;
+	border: 1px solid black;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	cursor: pointer;
+}
+
+.holder {
+	padding: 3px 0 0 3px;
+	width: 140px;
+	border: 1px solid black;
+}
+
+.tile.fake {
+	visibility: hidden;
+}
+
+.holder:after {
+	clear: both;
+	display: block;
+	content: '';
+	}
