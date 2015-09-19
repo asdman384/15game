@@ -8,37 +8,30 @@ function initGame15(){
 
 	var game = {
 
-		animation: function(){
-			this.tiles.removeClass('show');
-
-			var counter = 0;
-			(function animate(items) {
-				setTimeout(function() {
-					$(items[counter]).addClass('show');
-					counter++;
-					if(counter < items.length+2)
-						animate(items);
-				}, 60);
-			})(this.tiles);
+		animation: function(items, i) {
+			setTimeout(function() {
+				$(items[i]).addClass('show');
+				if(++i < items.length)
+					this.animation(items, i);
+			}.bind(this), 60);
 		},
 
 		init: function() {
-			this.field = $('#game15 .holder')
-			this.tiles = this.field.find('.tile');
-			this.fakeTile = this.field.find('.tile.fake');
-			this.reset = $('#game15').find('.button');
-			this.counter = $('#counter');
+			this.game =  $('#game15');
+			this.tiles = this.game.find('.tile');
+			this.reset = this.game.find('.new');
+			this.counter = this.game.find('#counter');
 			this.count = -1;
 			this.winResult = '';
-			
+
 			this.buildField();
 			this.events();
 		},
 
-
 		buildField: function() {
-
-			this.animation();
+			this.game.find('span').remove( ":contains('You win')" );
+			this.tiles.removeClass('show');
+			this.animation(this.tiles, 0);
 
 			this.metaField = [];
 			this.count = -1;
@@ -56,7 +49,6 @@ function initGame15(){
 			this.display();
 		},
 
-
 		events: function(){
 			this.reset.on('click', this.buildField.bind(this));
 			this.tiles.on('click', this.swapElems.bind(this));
@@ -64,31 +56,26 @@ function initGame15(){
 
 
 		display: function(e){
-
 			this.tiles.removeClass('fake');
 
 			for(var i = 0; i < this.metaField.length; i++){
 				var metaIndex = this.metaField[i];
 				
 				if(metaIndex == 16){
-					this.fakeTile = this.tiles.eq(i).addClass('fake');
+					this.tiles.eq(i).addClass('fake');
 				}
-
 				this.tiles.eq(i).text(metaIndex);
 			}
-
 			this.updateCounter();			
 		},
 
-
 		swapElems: function(e){
-
 			var index = parseInt($(e.currentTarget).text()),
 				metaIndex = this.metaField.indexOf(index),
 				fakeIndex = this.metaField.indexOf(16),
 				tmp = this.metaField[fakeIndex]; 
 
-			if ( ( Math.abs(fakeIndex - metaIndex) == 1 && (Math.floor(fakeIndex/4) == Math.floor(metaIndex/4)) ) || 
+			if ( ( Math.abs(fakeIndex - metaIndex) == 1 && (Math.floor(fakeIndex/4) == Math.floor(metaIndex/4)) ) ||
 				Math.abs(fakeIndex - metaIndex) == 4) {
 
 				this.metaField[fakeIndex] = this.metaField[metaIndex];
@@ -99,22 +86,19 @@ function initGame15(){
 			}
 		},
 
-
 		updateCounter: function(){		
 			this.counter.text(++this.count);
 		},
 
-
 		checkIfWin: function(){
-
 			if (this.winResult == this.metaField.join('')){
-				$('#game15').after('<span>You win</span>')
+				$('.stats').append('<span>You win</span>');
 			}
-		}, 
+		},
 
-
-		checkField: function( arr ){ //функция проверки имеет ли сгенерированое поле решение
-			var n=0;
+		checkField: function( arr ){
+			var n= 0,
+				row;
 			for (var j=0; j<16; j++){
 				if ( arr[j]!== 16 ){
 					for (var k=j+1 ; k < 16 ; k++){
@@ -124,26 +108,19 @@ function initGame15(){
 					}
 				}
 				else{
-					ryad=Math.floor(j/4)+1;
+					row=Math.floor(j/4)+1;
 				}
 			}
-			n=n+ryad;
-			if (n % 2 === 0){
-				return true;
-			}
-			else{
-				return false;
-			}
+			n=n+row;
+			return n % 2 === 0;
 		},
 
 		solveField: function (strt, goal){
 			var goal = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
 				strt = [14, 4, 7, 12, 1, 10, 8, 11, 2, 13, 5, 6, 9, 16, 3, 15],
 				list = [];// этот лист - цепочка ходов, приводящих к решению задачи
-
-
 		}
-	}
+	};
 
 	game.init();
 }
