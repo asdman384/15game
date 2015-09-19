@@ -1,32 +1,86 @@
-td > input[type="button"]{
-	width: 30px;
-	height: 30px;
-	transition: 0.1s;
+body {
+	font-family: tahoma, arial, verdana, sans-serif, 'Lucida Sans';
+	font-size: 12px;
 }
 
-.tile {
-	float: left;
-	margin: 0 3px 3px 0;
-	border: 1px solid black;
+.stats{
+	color: #aaa;
+	height: 20px;
+	padding: 5px;
+	cursor: default;
+}
+
+.noselect {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+#game15 .button {
 	width: 30px;
-	height: 30px;
+	height: 20px;
 	text-align: center;
-	line-height: 30px;
+	line-height: 20px;
+	vertical-align: middle;
+	background-color: rgb(247, 247, 247);
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
 	cursor: pointer;
 }
 
+
 .holder {
-	padding: 3px 0 0 3px;
-	width: 140px;
-	border: 1px solid black;
+	width: 184px;
+	padding: 6px;
+	border-radius: 2px;
+	background-color: rgb(247, 247, 247);
+	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.tile {
+	width: 40px;
+	height: 40px;
+	margin: 3px;
+
+	border-radius: 1px;
+	background-color: inherit;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.5);;
+	float: left;
+
+	text-align: center;
+	line-height: 40px;
+	cursor: pointer;
+
+	-moz-transform: scale(0);
+	-webkit-transform: scale(0);
+	transform: scale(0);
+	opacity: 0;
+
+	-moz-transition: all .2s ease-out;
+	-webkit-transition: all .2s ease-out;
+	transition: all .2s ease-out;
 }
 
 .tile.fake {
 	visibility: hidden;
+
+	-moz-transition: all 0s ease-out;
+	-webkit-transition: all 0s ease-out;
+	transition: all 0s ease-out;
 }
 
 .holder:after {
 	clear: both;
 	display: block;
 	content: '';
-	}
+}
+
+.show {
+  opacity: 1;
+  -moz-transform: scale(1);
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}

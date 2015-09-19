@@ -8,11 +8,25 @@ function initGame15(){
 
 	var game = {
 
+		animation: function(){
+			this.tiles.removeClass('show');
+
+			var counter = 0;
+			(function animate(items) {
+				setTimeout(function() {
+					$(items[counter]).addClass('show');
+					counter++;
+					if(counter < items.length+2)
+						animate(items);
+				}, 60);
+			})(this.tiles);
+		},
+
 		init: function() {
-			this.field = $('#game15').find('.holder');
+			this.field = $('#game15 .holder')
 			this.tiles = this.field.find('.tile');
 			this.fakeTile = this.field.find('.tile.fake');
-			this.reset = $('#game15').find('input[value=new]');
+			this.reset = $('#game15').find('.button');
 			this.counter = $('#counter');
 			this.count = -1;
 			this.winResult = '';
@@ -23,6 +37,9 @@ function initGame15(){
 
 
 		buildField: function() {
+
+			this.animation();
+
 			this.metaField = [];
 			this.count = -1;
 
@@ -36,7 +53,7 @@ function initGame15(){
 				this.metaField.sort(function(a, b){return Math.random() - 0.5;});
 			} while (!this.checkField(this.metaField))
 
-			this.display(this.metaField);
+			this.display();
 		},
 
 
@@ -46,7 +63,7 @@ function initGame15(){
 		},
 
 
-		display: function(a){
+		display: function(e){
 
 			this.tiles.removeClass('fake');
 
@@ -78,7 +95,7 @@ function initGame15(){
 				this.metaField[metaIndex] = tmp;
 
 				this.checkIfWin();
-				this.display(this.metaField);
+				this.display();
 			}
 		},
 
