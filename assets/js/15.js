@@ -60,7 +60,7 @@ function initGame15(){
 					fields: 'photo_50'
 				},
 				function(data) {
-					console.log('this.getUser:',data);
+
 					if (data.response){
 						this.user = data.response[0];
 					}
@@ -134,9 +134,16 @@ function initGame15(){
 		checkIfWin: function(){
 			if (this.winResult == this.metaField.join('')){
 				$('.stats').append('<span>You win</span>');
-				
-				if (this.oldResult >= this.count)
+
+				if (this.oldResult != '') {
+					if (this.oldResult >= this.count) {
+						this.setStorage(this.count);
+						setTimeout(this.getStorageKeys.bind(this), 1000);
+					}
+				} else {
 					this.setStorage(this.count);
+					setTimeout(this.getStorageKeys.bind(this), 1000);
+				}
 			}
 		},
 
@@ -149,12 +156,13 @@ function initGame15(){
 					global: 1
 				},
 				function(data) {
-					console.log('this.setStorage: ',data)
+
 				}
 			);
 		},
 
 		getStorageKeys: function(){
+			this.tableContent.empty();
 			VK.api(
 				'storage.getKeys',
 				{
@@ -163,7 +171,7 @@ function initGame15(){
 					global: 1
 				},
 				function(data) {
-					console.log('this.getStorageKeys.getKeys:',data);
+
 					if (data.response) {
 						VK.api(
 							'storage.get',
@@ -172,19 +180,18 @@ function initGame15(){
 								global: 1
 							},
 							function(data) {
-								console.log('this.getStorageKeys.get:',data);
+
 								if (data.response) {
 									data.response.sort(function(a,b) {
 										return a.value - b.value;
 									});
-									console.log('data.response', data.response);
+
 									var user_ids ='';
 									for (var i = 0; i< 10; ++i ){
 										if (data.response[i]){
 											user_ids += data.response[i].key + ',';
 										}
 									}
-									console.log('user_ids',user_ids);
 
 									VK.api(
 										'users.get',
@@ -195,11 +202,10 @@ function initGame15(){
 										function(table){
 
 											return function(usersData) {
-												console.log('this.getUsers:',usersData);
+
 												if (usersData.response) {
 													for (var i = 0; i < 10; ++i) {
 														if (table[i]) {
-
 															var founded = usersData.response.find(function (item) {
 																return ('id' + item.id) == this;
 															}, table[i].key);
@@ -207,28 +213,29 @@ function initGame15(){
 															if (table[i].key == ('id' + this.user.id))
 																this.oldResult = table[i].value;
 
-															console.log(this.oldResult);
-
 															var a = $('<a></a>')
 																.attr('href', "http://vk.com/" + table[i].key)
 																.attr('target', '_blank')
 																.html(
-																	'<div style="float: left; width: 40px">' +
-																		'<img style="width: 100%" src="'+ founded.photo_50 +'">'+
+																	'<div class="avatar">' +
+																		'<img src="'+ founded.photo_50 +'">'+
 																	'</div>' +
-																	'<span>'+founded.first_name+' '+founded.last_name+'</span>'
+																	'<span class="name">'+founded.first_name+'</span>'
 																	);
 
 															var td1 = $('<td></td>');
 															td1.append(a);
 															var td2 = $('<td></td>');
-															td2.html('<span>'+table[i].value+'</span>');
+															td2.html('<span class="points">'+table[i].value+'</span>');
 															var tr = $('<tr></tr>');
 															tr.append(td1);
 															tr.append(td2);
 															this.tableContent.append(tr);
 														}
 													}
+
+													this.tableContent.find('td').addClass('hide');
+													this.animation(this.tableContent.find('td'),0)
 												}
 											}.bind(this)
 										}.bind(this)(data.response)
