@@ -16,16 +16,56 @@ function initGame15(){
 			}.bind(this), 60);
 		},
 
-		init: function() {
+		init: function(VK) {
 			this.game =  $('#game15');
 			this.tiles = this.game.find('.tile');
 			this.reset = this.game.find('.new');
 			this.counter = this.game.find('#counter');
+			this.tableContent = $('.tour-table').find('.table-content');
+
 			this.count = -1;
 			this.winResult = '';
+			this.user = {};
+			this.oldResult = '';
+			this.tourTableData = [];
 
 			this.buildField();
 			this.events();
+
+			VK.init(
+				function() {
+					// API initialization succeeded
+					console.log('succeeded');
+					this.getUser();
+					this.getStorageKeys();
+
+				}.bind(this),
+
+				function() {
+					// API initialization failed
+					// Can reload page here
+					console.log('failed');
+				},
+
+				'5.37'
+			);
+
+		},
+
+		getUser: function (){
+
+			VK.api(
+				'users.get',
+				{
+					fields: 'photo_50'
+				},
+				function(data) {
+					console.log('this.getUser:',data);
+					if (data.response){
+						this.user = data.response[0];
+					}
+				}.bind(this)
+			);
 		},
 
 		buildField: function() {
@@ -55,7 +95,7 @@ function initGame15(){
 		},
 
 
-		display: function(e){
+		display: function(){
 			this.tiles.removeClass('fake');
 
 			for(var i = 0; i < this.metaField.length; i++){
@@ -81,8 +121,9 @@ function initGame15(){
 				this.metaField[fakeIndex] = this.metaField[metaIndex];
 				this.metaField[metaIndex] = tmp;
 
-				this.checkIfWin();
 				this.display();
+				this.checkIfWin();
+
 			}
 		},
 
@@ -93,7 +134,111 @@ function initGame15(){
 		checkIfWin: function(){
 			if (this.winResult == this.metaField.join('')){
 				$('.stats').append('<span>You win</span>');
+				
+				if (this.oldResult >= this.count)
+					this.setStorage(this.count);
 			}
+		},
+
+		setStorage: function(counter){
+			VK.api(
+				'storage.set',
+				{
+					key: 'id' + this.user.id,
+					value: counter,
+					global: 1
+				},
+				function(data) {
+					console.log('this.setStorage: ',data)
+				}
+			);
+		},
+
+		getStorageKeys: function(){
+			VK.api(
+				'storage.getKeys',
+				{
+					offset: 0,
+					count: 999,
+					global: 1
+				},
+				function(data) {
+					console.log('this.getStorageKeys.getKeys:',data);
+					if (data.response) {
+						VK.api(
+							'storage.get',
+							{
+								keys: data.response.join(','),
+								global: 1
+							},
+							function(data) {
+								console.log('this.getStorageKeys.get:',data);
+								if (data.response) {
+									data.response.sort(function(a,b) {
+										return a.value - b.value;
+									});
+									console.log('data.response', data.response);
+									var user_ids ='';
+									for (var i = 0; i< 10; ++i ){
+										if (data.response[i]){
+											user_ids += data.response[i].key + ',';
+										}
+									}
+									console.log('user_ids',user_ids);
+
+									VK.api(
+										'users.get',
+										{
+											fields: 'photo_50',
+											user_ids : user_ids
+										},
+										function(table){
+
+											return function(usersData) {
+												console.log('this.getUsers:',usersData);
+												if (usersData.response) {
+													for (var i = 0; i < 10; ++i) {
+														if (table[i]) {
+
+															var founded = usersData.response.find(function (item) {
+																return ('id' + item.id) == this;
+															}, table[i].key);
+
+															if (table[i].key == ('id' + this.user.id))
+																this.oldResult = table[i].value;
+
+															console.log(this.oldResult);
+
+															var a = $('<a></a>')
+																.attr('href', "http://vk.com/" + table[i].key)
+																.attr('target', '_blank')
+																.html(
+																	'<div style="float: left; width: 40px">' +
+																		'<img style="width: 100%" src="'+ founded.photo_50 +'">'+
+																	'</div>' +
+																	'<span>'+founded.first_name+' '+founded.last_name+'</span>'
+																	);
+
+															var td1 = $('<td></td>');
+															td1.append(a);
+															var td2 = $('<td></td>');
+															td2.html('<span>'+table[i].value+'</span>');
+															var tr = $('<tr></tr>');
+															tr.append(td1);
+															tr.append(td2);
+															this.tableContent.append(tr);
+														}
+													}
+												}
+											}.bind(this)
+										}.bind(this)(data.response)
+									);
+								}
+							}.bind(this)
+						);
+					}
+				}.bind(this)
+			);
 		},
 
 		checkField: function( arr ){
@@ -122,6 +267,6 @@ function initGame15(){
 		}
 	};
 
-	game.init();
+	game.init(VK);
 }
 

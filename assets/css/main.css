@@ -10,18 +10,15 @@ body {
 	cursor: default;
 }
 
-.noselect {
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+/*.content:after{*/
+	/*clear: both;*/
+	/*display: block;*/
+	/*content: '';*/
+/*}*/
+
+#game15{
+	float: left;
 }
-
-
-
-
 .holder {
 	width: 184px;
 	padding: 6px;
@@ -29,7 +26,11 @@ body {
 	background-color: white;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
-
+.holder:after {
+	clear: both;
+	display: block;
+	content: '';
+}
 #game15 .button {
 	width: 30px;
 	height: 20px;
@@ -41,7 +42,6 @@ body {
 	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
 	cursor: pointer;
 }
-
 .tile {
 	width: 40px;
 	height: 40px;
@@ -65,7 +65,6 @@ body {
 	-webkit-transition: all .2s ease-out;
 	transition: all .2s ease-out;
 }
-
 .fake {
 	visibility: hidden;
 
@@ -74,12 +73,20 @@ body {
 	transition: all 0s ease-out;
 }
 
-.holder:after {
-	clear: both;
-	display: block;
-	content: '';
+.tour-table{
+ 	float: left;
+	margin: 0 20px;
+
 }
 
+.noselect {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
 .show {
   opacity: 1;
   -moz-transform: scale(1);
