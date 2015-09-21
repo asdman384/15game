@@ -134,6 +134,7 @@ function initGame15(){
 		checkIfWin: function(){
 			if (this.winResult == this.metaField.join('')){
 				$('.stats').append('<span>You win</span>');
+				this.tiles.removeClass('show');
 
 				if (this.oldResult != '') {
 					if (this.oldResult >= this.count) {

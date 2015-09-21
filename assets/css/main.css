@@ -84,18 +84,6 @@ a {
 
 }
 
-.hide{
-	-moz-transform: scale(0);
-	-webkit-transform: scale(0);
-	transform: scale(0);
-	opacity: 0;
-
-	-moz-transition: all .2s ease-out;
-	-webkit-transition: all .2s ease-out;
-	transition: all .2s ease-out;
-}
-
-
 .table-content td {
 	border-radius: 2px;
 	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
