@@ -162,6 +162,85 @@ function initGame15(){
 			);
 		},
 
+		makeTable: function(usersArray){
+
+			usersArray.sort(
+				function(a,b) {
+					return a.value - b.value;
+				})
+			;
+
+			var user_ids ='';
+			for (var i = 0; i< 10; ++i ){
+				if (usersArray[i]){
+					user_ids += usersArray[i].key + ',';
+				}
+			}
+
+			VK.api(
+				'users.get',
+				{
+					fields: 'photo_50',
+					user_ids : user_ids
+				},
+				function(table){
+
+					return function(usersData) {
+
+						if (usersData.response) {
+							for (var i = 0; i < 10; ++i) {
+								if (table[i]) {
+									var founded = usersData.response.find(function (item) {
+										return ('id' + item.id) == this;
+									}, table[i].key);
+
+									if (table[i].key == ('id' + this.user.id))
+										this.oldResult = table[i].value;
+
+									var a = $('<a></a>')
+										.attr('href', "http://vk.com/" + table[i].key)
+										.attr('target', '_blank')
+										.html(
+										'<div class="avatar">' +
+										'<img src="'+ founded.photo_50 +'">'+
+										'</div>' +
+										'<span class="name">'+founded.first_name+'</span>'
+									);
+
+									var td1 = $('<td></td>');
+									td1.append(a);
+									var td2 = $('<td></td>');
+									td2.html('<span class="points">'+table[i].value+'</span>');
+									var tr = $('<tr></tr>');
+									tr.append(td1);
+									tr.append(td2);
+									this.tableContent.append(tr);
+								}
+							}
+
+							this.tableContent.find('td').addClass('hide');
+							this.animation(this.tableContent.find('td'),0)
+						}
+					}.bind(this)
+				}.bind(this)(usersArray))
+			;
+		},
+
+		getStorageValues: function(keys){
+			VK.api(
+				'storage.get',
+				{
+					keys: keys.join(','),
+					global: 1
+				},
+				function(data) {
+					if (data.response) {
+						this.makeTable(data.response)
+					}
+				}.bind(this)
+			);
+		},
+
 		getStorageKeys: function(){
 			this.tableContent.empty();
 			VK.api(
@@ -172,81 +251,11 @@ function initGame15(){
 					global: 1
 				},
 				function(data) {
-
 					if (data.response) {
-						VK.api(
-							'storage.get',
-							{
-								keys: data.response.join(','),
-								global: 1
-							},
-							function(data) {
-
-								if (data.response) {
-									data.response.sort(function(a,b) {
-										return a.value - b.value;
-									});
-
-									var user_ids ='';
-									for (var i = 0; i< 10; ++i ){
-										if (data.response[i]){
-											user_ids += data.response[i].key + ',';
-										}
-									}
-
-									VK.api(
-										'users.get',
-										{
-											fields: 'photo_50',
-											user_ids : user_ids
-										},
-										function(table){
-
-											return function(usersData) {
-
-												if (usersData.response) {
-													for (var i = 0; i < 10; ++i) {
-														if (table[i]) {
-															var founded = usersData.response.find(function (item) {
-																return ('id' + item.id) == this;
-															}, table[i].key);
-
-															if (table[i].key == ('id' + this.user.id))
-																this.oldResult = table[i].value;
-
-															var a = $('<a></a>')
-																.attr('href', "http://vk.com/" + table[i].key)
-																.attr('target', '_blank')
-																.html(
-																	'<div class="avatar">' +
-																		'<img src="'+ founded.photo_50 +'">'+
-																	'</div>' +
-																	'<span class="name">'+founded.first_name+'</span>'
-																	);
-
-															var td1 = $('<td></td>');
-															td1.append(a);
-															var td2 = $('<td></td>');
-															td2.html('<span class="points">'+table[i].value+'</span>');
-															var tr = $('<tr></tr>');
-															tr.append(td1);
-															tr.append(td2);
-															this.tableContent.append(tr);
-														}
-													}
-
-													this.tableContent.find('td').addClass('hide');
-													this.animation(this.tableContent.find('td'),0)
-												}
-											}.bind(this)
-										}.bind(this)(data.response)
-									);
-								}
-							}.bind(this)
-						);
+						this.getStorageValues(data.response);
 					}
-				}.bind(this)
-			);
+				}.bind(this))
+			;
 		},
 
 		checkField: function( arr ){
