@@ -106,7 +106,7 @@ function initGame15(){
 					this.tiles.eq(i).addClass('fake');
 				}
 				this.tiles.eq(i).text(metaIndex);
-				this.tiles.eq(i).css('background-color', 'rgb('+((metaIndex*5)+180) +',0,255)')
+				//this.tiles.eq(i).css('background-color', 'rgb('+((metaIndex*5)+180) +',0,255)')
 			}
 			this.updateCounter();			
 		},
