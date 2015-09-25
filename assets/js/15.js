@@ -136,12 +136,10 @@ function initGame15(){
 				$('.stats').append('<span>You win</span>');
 				this.tiles.removeClass('show');
 
-				if (this.oldResult != '') {
-					if (this.oldResult >= this.count) {
-						this.setStorage(this.count);
-						setTimeout(this.getStorageKeys.bind(this), 1000);
-					}
-				} else {
+				if (this.oldResult == '') {
+					this.setStorage(this.count);
+					setTimeout(this.getStorageKeys.bind(this), 1000);
+				} else if (this.oldResult >= this.count) {
 					this.setStorage(this.count);
 					setTimeout(this.getStorageKeys.bind(this), 1000);
 				}
