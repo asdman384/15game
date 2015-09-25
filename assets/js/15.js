@@ -71,6 +71,7 @@ function initGame15(){
 		buildField: function() {
 			this.game.find('span').remove( ":contains('You win')" );
 			this.tiles.removeClass('show');
+			this.game.removeClass('stop');
 			this.animation(this.tiles, 0);
 
 			this.metaField = [];
@@ -105,6 +106,7 @@ function initGame15(){
 					this.tiles.eq(i).addClass('fake');
 				}
 				this.tiles.eq(i).text(metaIndex);
+				this.tiles.eq(i).css('background-color', 'rgb('+((metaIndex*5)+180) +',0,255)')
 			}
 			this.updateCounter();			
 		},
@@ -134,12 +136,15 @@ function initGame15(){
 		checkIfWin: function(){
 			if (this.winResult == this.metaField.join('')){
 				$('.stats').append('<span>You win</span>');
-				this.tiles.removeClass('show');
+				//this.tiles.removeClass('show');
+				this.game.addClass('stop');
 
-				if (this.oldResult == '') {
-					this.setStorage(this.count);
-					setTimeout(this.getStorageKeys.bind(this), 1000);
-				} else if (this.oldResult >= this.count) {
+				if (this.oldResult != '') {
+					if (this.oldResult >= this.count) {
+						this.setStorage(this.count);
+						setTimeout(this.getStorageKeys.bind(this), 1000);
+					}
+				} else {
 					this.setStorage(this.count);
 					setTimeout(this.getStorageKeys.bind(this), 1000);
 				}
